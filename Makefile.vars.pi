@@ -1,0 +1,29 @@
+# This file contains linux-specific environment variables
+# It is included by Makefile if a symlink is created to point to it
+
+CXX=g++
+CC=gcc
+
+export CXX
+export CC
+
+# debugging version
+#DFLAGS = -g
+
+# optimized version
+DFLAGS = -O3 -fomit-frame-pointer -fexpensive-optimizations -funroll-loops
+
+# platform-specific compile flags
+PFLAGS = ${DFLAGS} -DUNIX -DLINUX -DNATIVE_CPU_ARM \
+	-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -DUSE_OPENGL -DUSE_EGL -DIS_RPI -DUSE_OPENMAX \
+	-I/opt/vc/include \
+	-I/opt/vc/include/interface/vcos/pthreads \
+	-I/opt/vc/include/IL -DHAVE_LIBOPENMAX=2 \
+	-I/opt/vc/include/interface/vmcs_host/linux \
+	-DOMX -DOMX_SKIP64BIT -DUSE_EXTERNAL_OMX -DHAVE_LIBBCM_HOST -DUSE_EXTERNAL_LIBBCM_HOST -DUSE_VCHIQ_ARM \
+	-mcpu=arm1176jzf-s
+
+# platform-specific lib flags
+LIBS = -lGLESv2 -lEGL \
+	-L/opt/vc/lib/ -lopenmaxil \
+	-lbcm_host -lvchiq_arm -lvcos -lrt -ldns_sd -lpthread
