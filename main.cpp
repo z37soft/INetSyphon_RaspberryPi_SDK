@@ -1,3 +1,7 @@
+/*
+ TCPSCLient : made by Nozomu Miura @ techlife SG.
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -7,6 +11,7 @@
 #include <sys/time.h>
 #include "TL_INetSyphonSDK.h"
 
+//Note: TL_INetSyphonSDK is singleton.
 TL_INetSyphonSDK*	gManager = 0;
 
 TL_INetSyphonSDK_BonjourItem	gConnectedHost;
@@ -14,6 +19,7 @@ char gConnectServerName[256];
 int	 gConnectServerPort;
 
 
+//callback when a server is added or removed.
 void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 {
 	int i, num;
@@ -22,11 +28,12 @@ void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 	for (i=0;i<num;i++)
 	{
 		TL_INetSyphonSDK_BonjourItem	item = servers[i];
+        //Check already connected?
 		if ( item.m_Name == gConnectedHost.m_Name ) return;
 	}
 	if ( num > 0 )
 	{
-		int isel = 0;
+		int isel = 0;// If you don't choose a host, then we choose at 0.
 		for (i=0;i<num;i++)
 		{
 			TL_INetSyphonSDK_BonjourItem	item = servers[i];
@@ -40,16 +47,19 @@ void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 		
 		printf( "Connect to %s\n", item.m_Name.c_str() );
 		
+        //Try connecting.
 		gManager->ConnectToTCPSyphonServerByName( item.m_Name.c_str() );
 		gConnectedHost = item;
 	}
 	else
 	{
+        //That host was removed.
 		gConnectedHost.m_Name = "";
 	}
 }
 
 
+//Command line analyzer
 void	analysis_Commandline( int argc, char **argv )
 {
     int opt;
@@ -154,6 +164,7 @@ int main(int argc, char **argv)
 		gManager->ConnectTo( gConnectServerName, gConnectServerPort );
 	}
 	
+    //If you have a render thread, you should put "Render" on it. This is a bit rough example.
 	while ( 1 )
 	{
 		gManager->Render();
