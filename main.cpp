@@ -1,7 +1,3 @@
-/*
- TCPSCLient : made by Nozomu Miura @ techlife SG.
- */
-
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -10,8 +6,9 @@
 #include <signal.h>
 #include <sys/time.h>
 #include "TL_INetSyphonSDK.h"
+#include <bcm_host.h>	// for dispmanx schlop
 
-//Note: TL_INetSyphonSDK is singleton.
+
 TL_INetSyphonSDK*	gManager = 0;
 
 TL_INetSyphonSDK_BonjourItem	gConnectedHost;
@@ -19,7 +16,6 @@ char gConnectServerName[256];
 int	 gConnectServerPort;
 
 
-//callback when a server is added or removed.
 void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 {
 	int i, num;
@@ -28,12 +24,11 @@ void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 	for (i=0;i<num;i++)
 	{
 		TL_INetSyphonSDK_BonjourItem	item = servers[i];
-        //Check already connected?
 		if ( item.m_Name == gConnectedHost.m_Name ) return;
 	}
 	if ( num > 0 )
 	{
-		int isel = 0;// If you don't choose a host, then we choose at 0.
+		int isel = 0;
 		for (i=0;i<num;i++)
 		{
 			TL_INetSyphonSDK_BonjourItem	item = servers[i];
@@ -47,19 +42,16 @@ void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 		
 		printf( "Connect to %s\n", item.m_Name.c_str() );
 		
-        //Try connecting.
 		gManager->ConnectToTCPSyphonServerByName( item.m_Name.c_str() );
 		gConnectedHost = item;
 	}
 	else
 	{
-        //That host was removed.
 		gConnectedHost.m_Name = "";
 	}
 }
 
 
-//Command line analyzer
 void	analysis_Commandline( int argc, char **argv )
 {
     int opt;
@@ -101,30 +93,13 @@ void	analysis_Commandline( int argc, char **argv )
             	break;
             case 'd':
             	{
-            		float l,t, r, b;
             		int x,y,w,h;
-            		x=0;
-            		w=1920;
-            		y=0;
-            		h=1080;
             		sscanf( optarg, "%d,%d,%d,%d", &x, &y, &w, &h );
-            		l = -1.0 + 2.0 * (float)x / 1920.0;
-            		r = -1.0 + 2.0 * (float)(x+w) / 1920.0;
-            		t = -1.0 + 2.0 * (float)y / 1080.0;
-            		b = -1.0 + 2.0 * (float)(y+h) / 1080.0;
-            		gVerticesFullScreen[0*2+0] = l;
-            		gVerticesFullScreen[4*2+0] = l;
-            		gVerticesFullScreen[5*2+0] = l;
-            		gVerticesFullScreen[1*2+0] = r;
-            		gVerticesFullScreen[2*2+0] = r;
-            		gVerticesFullScreen[3*2+0] = r;
-            		
-            		gVerticesFullScreen[0*2+1] = -b;
-            		gVerticesFullScreen[1*2+1] = -b;
-            		gVerticesFullScreen[5*2+1] = -b;
-            		gVerticesFullScreen[2*2+1] = -t;
-            		gVerticesFullScreen[3*2+1] = -t;
-            		gVerticesFullScreen[4*2+1] = -t;
+            		gRequestVerticesFullScreen = true;
+            		gRequestVerticesFullScreenX = x;
+            		gRequestVerticesFullScreenY = y;
+            		gRequestVerticesFullScreenW = w;
+            		gRequestVerticesFullScreenH = h;
 				}
 				break;
 
@@ -146,7 +121,7 @@ int main(int argc, char **argv)
 {
 	gConnectServerName[0] = 0;
 	
-	printf( "\nTCPSClient publicbeta5 Copyright(C) 2015-2016 Nozomu Miura. All rights reserved.\n\n" );
+	printf( "\nTCPSClient publicbeta6 Copyright(C) 2015-2016 Nozomu Miura. All rights reserved.\n\n" );
 
 	analysis_Commandline( argc, argv );
 
@@ -164,7 +139,6 @@ int main(int argc, char **argv)
 		gManager->ConnectTo( gConnectServerName, gConnectServerPort );
 	}
 	
-    //If you have a render thread, you should put "Render" on it. This is a bit rough example.
 	while ( 1 )
 	{
 		gManager->Render();
