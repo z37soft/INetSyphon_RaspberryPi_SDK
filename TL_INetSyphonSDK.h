@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <unistd.h>
+#include <stdint.h>
 
 class	TL_INetSyphonSDK_BonjourItem
 {
@@ -45,6 +47,7 @@ public:
 	std::string	GetConnectedTCPSyphonServerName();
 
 	int		Render();
+	int		MemoryRender( uint32_t line, uint32_t numLEDs, uint8_t* pixels );
 };
 
 extern	float gTexCoords[12];

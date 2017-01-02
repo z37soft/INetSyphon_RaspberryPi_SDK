@@ -39,9 +39,7 @@ void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 			}
 		}
 		TL_INetSyphonSDK_BonjourItem	item = servers[isel];
-		
-		printf( "Connect to %s\n", item.m_Name.c_str() );
-		
+				
 		gManager->ConnectToTCPSyphonServerByName( item.m_Name.c_str() );
 		gConnectedHost = item;
 	}
@@ -121,7 +119,7 @@ int main(int argc, char **argv)
 {
 	gConnectServerName[0] = 0;
 	
-	printf( "\nTCPSClient publicbeta6 Copyright(C) 2015-2016 Nozomu Miura. All rights reserved.\n\n" );
+	printf( "\nTCPSClient publicbeta6 Copyright(C) 2015-2017 Nozomu Miura. All rights reserved.\n\n" );
 
 	analysis_Commandline( argc, argv );
 
@@ -132,18 +130,22 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	
-	gManager->StartClient();
-
 	if ( gConnectServerName[0] != 0 )
 	{
 		gManager->ConnectTo( gConnectServerName, gConnectServerPort );
 	}
-	
+	else
+	{
+		//Starts Bonjour.
+		gManager->StartClient();	
+	}	
+		
 	while ( 1 )
 	{
 		gManager->Render();
 	}
-
+	
+	gManager->DisconnectToTCPSyphonServer();
 	gManager->StopClient();
 	
 	delete gManager;
