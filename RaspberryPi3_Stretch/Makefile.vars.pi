@@ -8,10 +8,9 @@ export CXX
 export CC
 
 # debugging version
-#DFLAGS = -g
-
+#DFLAGS = -std=c++0x -g
 # optimized version
-DFLAGS = -O3 -fomit-frame-pointer -fexpensive-optimizations -funroll-loops
+DFLAGS = -std=c++0x -O3 -fomit-frame-pointer -fexpensive-optimizations -funroll-loops
 
 # platform-specific compile flags
 PFLAGS = ${DFLAGS} -DUNIX -DLINUX -DNATIVE_CPU_ARM \
@@ -24,6 +23,6 @@ PFLAGS = ${DFLAGS} -DUNIX -DLINUX -DNATIVE_CPU_ARM \
 	-mcpu=arm1176jzf-s
 
 # platform-specific lib flags
-LIBS = -lGLESv2 -lEGL \
+LIBS = -lbrcmGLESv2 -lbrcmEGL \
 	-L/opt/vc/lib/ -lopenmaxil \
 	-lbcm_host -lvchiq_arm -lvcos -lrt -ldns_sd -lpthread

@@ -19,7 +19,7 @@ int	 gConnectServerPort;
 void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 {
 	int i, num;
-	
+
 	num = servers.size();
 	for (i=0;i<num;i++)
 	{
@@ -39,7 +39,7 @@ void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 			}
 		}
 		TL_INetSyphonSDK_BonjourItem	item = servers[isel];
-				
+
 		gManager->ConnectToTCPSyphonServerByName( item.m_Name.c_str() );
 		gConnectedHost = item;
 	}
@@ -53,7 +53,7 @@ void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
 void	analysis_Commandline( int argc, char **argv )
 {
     int opt;
-	
+
     while((opt = getopt(argc, argv, "lp:c:s:d:")) != -1){
         switch(opt){
             case 'l':
@@ -80,7 +80,7 @@ void	analysis_Commandline( int argc, char **argv )
             		gTexCoords[1*2+0] = r;
             		gTexCoords[2*2+0] = r;
             		gTexCoords[3*2+0] = r;
-            		
+
             		gTexCoords[0*2+1] = 1.0-b;
             		gTexCoords[1*2+1] = 1.0-b;
             		gTexCoords[5*2+1] = 1.0-b;
@@ -103,7 +103,7 @@ void	analysis_Commandline( int argc, char **argv )
 
             case '?':
                 printf("Unknown or required argument option -%c\n", optopt);
-                printf("Usage: COMMAND [-l -c server -p port -s source_area -d destination_area] ...\n");
+                printf("Usage: COMMAND [-l -c server(IP address) -p port -s source_area -d destination_area] ...\n");
                 printf("l: display servers\n");
                 printf("source_area: left(0),top(0),right(1),bottom(1)\n");
                 printf("destination_area: x(0),y(0),width(1920),height(1080)\n");
@@ -111,15 +111,16 @@ void	analysis_Commandline( int argc, char **argv )
                 break;
         }
     }
-    printf( "\n" );    
+    printf( "\n" );
 }
 
 
 int main(int argc, char **argv)
 {
 	gConnectServerName[0] = 0;
-	
-	printf( "\nTCPSClient publicbeta6 Copyright(C) 2015-2017 Nozomu Miura. All rights reserved.\n\n" );
+	gConnectServerPort = 7778;
+
+	printf( "\nTCPSClient publicbeta10 Copyright(C) 2015-2017 Nozomu Miura. All rights reserved.\n\n" );
 
 	analysis_Commandline( argc, argv );
 
@@ -129,7 +130,7 @@ int main(int argc, char **argv)
 	{
 		return 1;
 	}
-	
+
 	if ( gConnectServerName[0] != 0 )
 	{
 		gManager->ConnectTo( gConnectServerName, gConnectServerPort );
@@ -137,19 +138,26 @@ int main(int argc, char **argv)
 	else
 	{
 		//Starts Bonjour.
-		gManager->StartClient();	
-	}	
-		
+		gManager->StartClient();
+	}
+
 	while ( 1 )
 	{
-		gManager->Render();
+		if ( 1 == gManager->Render() )
+		{
+			if ( gConnectServerName[0] != 0 )
+			{
+				gManager->DisconnectToTCPSyphonServer();
+
+				gManager->ConnectTo( gConnectServerName, gConnectServerPort );
+			}
+		}
 	}
-	
 	gManager->DisconnectToTCPSyphonServer();
 	gManager->StopClient();
-	
+
 	delete gManager;
 	gManager = 0;
-	
+
 	return	0;
 }
