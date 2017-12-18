@@ -141,9 +141,13 @@ int main(int argc, char **argv)
 		gManager->StartClient();
 	}
 
+	int reconnectCounter = 0;
 	while ( 1 )
 	{
-		if ( 1 == gManager->Render() )
+		int ret;
+
+		ret = gManager->Render();
+		if ( 1 == ret )
 		{
 			if ( gConnectServerName[0] != 0 )
 			{
@@ -151,7 +155,20 @@ int main(int argc, char **argv)
 
 				gManager->ConnectTo( gConnectServerName, gConnectServerPort );
 			}
+			else
+			{
+				++reconnectCounter;
+				if ( reconnectCounter > 60 * 1 )
+				{
+					//retry connection
+					gManager->ConnectToTCPSyphonServerByName( gConnectedHost.m_Name.c_str() );
+
+					reconnectCounter = 0;
+				}
+			}
 		}
+		else
+			reconnectCounter = 0;
 	}
 	gManager->DisconnectToTCPSyphonServer();
 	gManager->StopClient();

@@ -9,7 +9,6 @@ export CC
 
 # debugging version
 #DFLAGS = -std=c++0x -g
-
 # optimized version
 DFLAGS = -std=c++0x -O3 -fomit-frame-pointer -fexpensive-optimizations -funroll-loops
 
