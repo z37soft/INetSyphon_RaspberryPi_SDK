@@ -14,6 +14,7 @@ TL_INetSyphonSDK*	gManager = 0;
 TL_INetSyphonSDK_BonjourItem	gConnectedHost;
 char gConnectServerName[256];
 int	 gConnectServerPort;
+char gBindToDeviceName[256];
 
 
 void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers )
@@ -54,7 +55,7 @@ void	analysis_Commandline( int argc, char **argv )
 {
     int opt;
 
-    while((opt = getopt(argc, argv, "lp:c:s:d:")) != -1){
+    while((opt = getopt(argc, argv, "lp:c:s:d:b:")) != -1){
         switch(opt){
             case 'l':
             	strcpy( gConnectServerName, "#_dummy" );
@@ -98,15 +99,19 @@ void	analysis_Commandline( int argc, char **argv )
             		gRequestVerticesFullScreenY = y;
             		gRequestVerticesFullScreenW = w;
             		gRequestVerticesFullScreenH = h;
-				}
-				break;
+							}
+							break;
+						case 'b':
+            	strcpy( gBindToDeviceName, optarg );
+            	break;
 
             case '?':
                 printf("Unknown or required argument option -%c\n", optopt);
-                printf("Usage: COMMAND [-l -c server(IP address) -p port -s source_area -d destination_area] ...\n");
+                printf("Usage: COMMAND [-l -c server(IP address) -p port -s source_area -d destination_area] -b devicename ...\n");
                 printf("l: display servers\n");
                 printf("source_area: left(0),top(0),right(1),bottom(1)\n");
                 printf("destination_area: x(0),y(0),width(1920),height(1080)\n");
+								printf("b: Bind to device, Ex. eth0, wlan0, eth1 \n");
                 exit(0);
                 break;
         }
@@ -117,6 +122,7 @@ void	analysis_Commandline( int argc, char **argv )
 
 int main(int argc, char **argv)
 {
+	gBindToDeviceName[0] = 0;
 	gConnectServerName[0] = 0;
 	gConnectServerPort = 7778;
 
@@ -129,6 +135,11 @@ int main(int argc, char **argv)
 	if ( gManager->Initialization( OnNotify_ChangedServer ) )
 	{
 		return 1;
+	}
+
+	if ( gBindToDeviceName[0] != 0 )
+	{
+		gManager->SetBindToDevice( gBindToDeviceName );
 	}
 
 	if ( gConnectServerName[0] != 0 )

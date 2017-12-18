@@ -24,18 +24,21 @@ class	TL_INetSyphonSDK
 protected:
 	TL_INetTCPSyphonSDK_Client*		m_Client;
 	TL_INetSyphonSDK_OnNotify_ChangedServer		m_OnNotify;
-	
+
 	TL_INetSyphonSDK();
 
 public:
 	static	TL_INetSyphonSDK*	CreateInstance();
 	virtual	~TL_INetSyphonSDK();
-	
+
 	virtual	void	OnNotify_ChangedServer( std::vector<TL_INetSyphonSDK_BonjourItem> servers );
 
 public:
 	int		Initialization( TL_INetSyphonSDK_OnNotify_ChangedServer notify );
-	
+
+	//option: name = "eth0", "wlan0", "eth1" etc.
+	void  SetBindToDevice( const char* name );
+
 	int		StartClient();
 	void	StopClient();
 
