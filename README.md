@@ -22,13 +22,13 @@ cp TCPSClient.bin ~
 ```
 
 ##NOTE:
-	+Current version supports to receive JPEG encode only. I recommend “TurboJPEG”.
-	+When you use -c option, then you can choose a server. usage; ./TCPSClient.bin -c 192.168.0.130 -p 7778, the software will try connecting to that addredd when it is disconnected.
-	+You can choose a network port, "-p port-number"
-	+Trim source area. default is whole area ( the same as "-s 0,0,1,1" )
++Current version supports to receive JPEG encode only. I recommend “TurboJPEG”.
++When you use -c option, then you can choose a server. usage; ./TCPSClient.bin -c 192.168.0.130 -p 7778, the software will try connecting to that addredd when it is disconnected.
++You can choose a network port, "-p port-number"
++Trim source area. default is whole area ( the same as "-s 0,0,1,1" )
 > -s left(0),top(0),right(1),bottom(1)
-	+Change show position. default is fit screen ( the same as "-d 0,0,1920,1080" )
++Change show position. default is fit screen ( the same as "-d 0,0,1920,1080" )
 > -d x(0),y(0),width(1920),height(1080)
-	+When server closes session, then this software will quit.
-	+When image resolution is changed, then this software will refuse it.
-	+If you want to quit, then shoot CTRL+C
++When server closes session, then this software will quit.
++When image resolution is changed, then this software will refuse it.
++If you want to quit, then shoot CTRL+C
